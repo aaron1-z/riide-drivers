@@ -1,21 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Text, Image, Alert } from 'react-native';  // Import Alert here
 import Button from '../components/Button';
 import Colors from '../utils/colors';
+import { loginUser, googleLogin, icpLogin } from '../services/api'; // Import the API service
 
 const LoginScreen: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+
+  const handleLogin = async () => {
+    try {
+      const token = await loginUser(email, password);
+      console.log('Token:', token);
+      Alert.alert('Login successful', `Token: ${token}`);
+    } catch (error) {
+      Alert.alert('Login failed', 'Invalid credentials');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/Login.png')} style={styles.image} />
       <Text style={styles.title}>Log In</Text>
-      <TextInput style={styles.input} placeholder="Email" placeholderTextColor={Colors.textSecondary} />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor={Colors.textSecondary}
+        value={email}
+        onChangeText={setEmail}
+      />
       <TextInput
         style={styles.input}
         placeholder="Password"
         placeholderTextColor={Colors.textSecondary}
         secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
-      <Button title="Log In" onPress={() => Alert.alert('Logging in...')} /> {/* Use Alert here */}
+      <Button title="Log In" onPress={handleLogin} />
+      <Button title="Log In with Google" onPress={googleLogin} />
+      <Button title="Log In with ICP" onPress={icpLogin} />
     </View>
   );
 };
